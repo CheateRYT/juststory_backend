@@ -8,6 +8,55 @@ import { PrismaService } from 'src/prisma/prisma.service'
 export class UserService {
 	constructor(private readonly prisma: PrismaService) {}
 
+	async onModuleInit() {
+		await this.createDefaultAdminFirst()
+		await this.createDefaultAdminSecond()
+	}
+
+	async createDefaultAdminFirst() {
+		const existingAdminFirst = await this.prisma.user.findFirst({
+			where: { name: 'adminlev' },
+		})
+
+		if (!existingAdminFirst) {
+			const hashedPassword = await argon2.hash('qwerty')
+			await this.prisma.user.create({
+				data: {
+					name: 'adminlev',
+					password: hashedPassword,
+					token: '',
+					subscription: false,
+					subBuyTime: null,
+					subEndTime: null,
+					role: 'Admin',
+				},
+			})
+		}
+	}
+	async createDefaultAdminSecond() {
+		const existingAdminSecond = await this.prisma.user.findFirst({
+			where: { name: 'adminzhenya' },
+		})
+		const subBuyTime = new Date('2024-11-28T00:00:00.000Z')
+		const subEndTime = new Date(subBuyTime)
+		subEndTime.setDate(subEndTime.getDate() + 30)
+
+		if (!existingAdminSecond) {
+			const hashedPassword = await argon2.hash('qwerty2')
+			await this.prisma.user.create({
+				data: {
+					name: 'adminzhenya',
+					password: hashedPassword,
+					token: '',
+					subscription: true,
+					subBuyTime: subBuyTime,
+					subEndTime: subEndTime,
+					role: 'Admin',
+				},
+			})
+		}
+	}
+
 	async register(login: string, password: string): Promise<User> {
 		const hashedPassword = await argon2.hash(password)
 		const newUser = await this.prisma.user.create({
@@ -47,6 +96,11 @@ export class UserService {
 		} catch (error) {
 			return null
 		}
+	}
+
+	async getUserRoleByToken(token: string): Promise<string | null> {
+		const user = await this.validateToken(token)
+		return user ? user.role : null
 	}
 
 	async getUserSubscriptionDetails(token: string): Promise<{

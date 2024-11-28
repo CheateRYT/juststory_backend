@@ -10,9 +10,18 @@ datasource db {
 model User {
   id           Int       @id @default(autoincrement())
   token        String
+  role         String    @default("User")
   name         String    @unique
   password     String    @unique
   subscription Boolean   @default(false)
   subBuyTime   DateTime?
   subEndTime   DateTime?
+}
+
+model Subscription {
+  id            Int @id @default(autoincrement())
+  name          String
+  price         String        
+  daysPeriod     Int      @default(30)
+  description   String
 }
