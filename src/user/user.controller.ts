@@ -25,7 +25,6 @@ export class UserController {
 		const token = await this.usersService.generateToken(user)
 		return { message: 'Успешный вход', user, token }
 	}
-
 	@Get('validate-token')
 	async validateToken(@Request() req) {
 		const token = req.headers.authorization?.split(' ')[1] //
@@ -34,5 +33,15 @@ export class UserController {
 		}
 		const user = await this.usersService.validateToken(token)
 		return { valid: !!user }
+	}
+	@Get('get-subcription-info')
+	async getSubscriptionDetails(@Request() req) {
+		const token = req.headers.authorization?.split(' ')[1] //
+		if (!token) {
+			return { valid: false, message: 'Токен не предоставлен' }
+		}
+		const subscriptionDetails =
+			await this.usersService.getUserSubscriptionDetails(token)
+		return { subscriptionDetails }
 	}
 }

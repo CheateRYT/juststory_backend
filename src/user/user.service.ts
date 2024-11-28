@@ -14,7 +14,7 @@ export class UserService {
 			data: {
 				name: login,
 				password: hashedPassword,
-				token: '', // Устанавливаем токен в пустую строку или генерируем его позже
+				token: '',
 				subscription: false,
 				subBuyTime: null,
 				subEndTime: null,
@@ -37,7 +37,7 @@ export class UserService {
 
 	async generateToken(user: User): Promise<string> {
 		const payload = { id: user.id, name: user.name }
-		return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }) // Убедитесь, что JWT_SECRET задан в переменных окружения
+		return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' })
 	}
 
 	async validateToken(token: string): Promise<User | null> {
@@ -46,6 +46,22 @@ export class UserService {
 			return this.prisma.user.findUnique({ where: { id: decoded.id } })
 		} catch (error) {
 			return null
+		}
+	}
+
+	async getUserSubscriptionDetails(token: string): Promise<{
+		subscription: boolean
+		subBuyTime: Date | null
+		subEndTime: Date | null
+	} | null> {
+		const user = await this.validateToken(token)
+		if (!user) {
+			return null
+		}
+		return {
+			subscription: user.subscription,
+			subBuyTime: user.subBuyTime,
+			subEndTime: user.subEndTime,
 		}
 	}
 }
