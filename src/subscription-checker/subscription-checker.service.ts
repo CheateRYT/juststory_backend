@@ -33,9 +33,7 @@ export class SubscriptionCheckerService implements OnModuleInit {
 					subEndTime: null,
 				},
 			})
-			console.log(
-				`Подписка пользователя ${user.name} истекла и была отключена.`
-			)
+			console.log(`Подписка пользователя ${user.name} истекла и была отключен.`)
 		}
 	}
 }
