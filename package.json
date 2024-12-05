@@ -33,6 +33,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "gigachat-node": "^2.1.4",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
     "mysql2": "^3.11.4",
     "pg": "^8.13.1",
