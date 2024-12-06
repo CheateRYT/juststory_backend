@@ -16,7 +16,7 @@ export class AiService {
 	async sendMessageFirst(message: string) {
 		try {
 			const response = await this.client.completion({
-				model: 'GigaChat-Pro:latest',
+				model: 'GigaChat:latest',
 				messages: [
 					{
 						role: 'user',

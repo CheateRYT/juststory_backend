@@ -11,7 +11,7 @@ export class SubscriptionCheckerService implements OnModuleInit {
 		this.checkExpiredSubscriptions()
 	}
 
-	@Cron('0 * * * *') // Запускаем каждую минуту
+	@Cron('0 0 * * *')
 	async checkExpiredSubscriptions() {
 		const now = new Date()
 
