@@ -1,6 +1,5 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common'
 import { GigaChat } from 'gigachat-node'
-
 @Injectable()
 export class AiService {
 	private client: GigaChat
@@ -94,4 +93,46 @@ export class AiService {
 			)
 		}
 	}
+	// async generateImage(prompt: string) {
+	// 	try {
+	// 		const response = await this.client.completion({
+	// 			model: 'GigaChat:latest',
+	// 			messages: [
+	// 				{
+	// 					role: 'user',
+	// 					content: `Нарисуй фото ${prompt}`,
+	// 				},
+	// 			],
+	// 		})
+
+	// 		// Логируем весь ответ для отладки
+	// 		console.log('Ответ от API:', response)
+
+	// 		const imageUrl = response.choices[0]?.message?.image // Используем опциональную цепочку
+	// 		if (!imageUrl) {
+	// 			throw new Error(
+	// 				'Изображение не было сгенерировано или отсутствует в ответе.'
+	// 			)
+	// 		}
+
+	// 		// Сохранение изображения
+	// 		const imagePath = path.join(
+	// 			__dirname,
+	// 			'..',
+	// 			'..',
+	// 			'public',
+	// 			'img',
+	// 			`${Date.now()}.png`
+	// 		)
+	// 		const imageBuffer = Buffer.from(imageUrl, 'base64') // Предполагается, что изображение приходит в формате base64
+	// 		fs.writeFileSync(imagePath, imageBuffer)
+	// 		return { imagePath: `/img/${path.basename(imagePath)}` } // Возвращаем путь к изображению
+	// 	} catch (error) {
+	// 		console.error('Ошибка при генерации изображения:', error) // Логируем ошибку
+	// 		throw new HttpException(
+	// 			`Ошибка при генерации изображения - ${error.message}`,
+	// 			HttpStatus.INTERNAL_SERVER_ERROR
+	// 		)
+	// 	}
+	// }
 }

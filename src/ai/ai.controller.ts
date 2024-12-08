@@ -10,7 +10,10 @@ export class AiController {
 		await this.aiService.initialize() // Инициализация и получение токена
 		return await this.aiService.sendMessageFirst(message)
 	}
-
+	// @Post('generate-img')
+	// async generateImage(@Body('prompt') prompt: string) {
+	// 	return await this.aiService.generateImage(prompt)
+	// }
 	@Post('send-message')
 	async sendMessage(
 		@Body('message') message: string,
