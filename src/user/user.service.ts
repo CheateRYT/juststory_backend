@@ -1,12 +1,15 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, Inject } from "@nestjs/common";
 import { User } from "@prisma/client";
 import * as argon2 from "argon2";
 import * as jwt from "jsonwebtoken";
 import { PrismaService } from "src/prisma/prisma.service";
-
+import Redis from "ioredis";
 @Injectable()
 export class UserService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    @Inject("REDIS_CLIENT") private readonly redis: Redis
+  ) {}
 
   async onModuleInit() {
     await this.createDefaultAdminFirst();
@@ -71,13 +74,12 @@ export class UserService {
     });
     return newUser;
   }
-
   async findUserByLogin(login: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { name: login } });
   }
 
   async validateUser(login: string, password: string): Promise<User | null> {
-    const user = await this.findUserByLogin(login);
+    const user = await this.prisma.user.findUnique({ where: { name: login } });
     if (user && (await argon2.verify(user.password, password))) {
       return user;
     }
@@ -103,23 +105,33 @@ export class UserService {
     return user ? user.role : null;
   }
 
-  async getUser(token: string): Promise<{
-    name: string;
-    role: string;
-    subscription: boolean;
-    subBuyTime: Date | null;
-    subEndTime: Date | null;
-  } | null> {
+  async getUser(token: string): Promise<any> {
+    const cachedUser = await this.redis.get(`user:${token}`);
+    if (cachedUser) {
+      return JSON.parse(cachedUser);
+    }
+
     const user = await this.validateToken(token);
     if (!user) {
       return null;
     }
-    return {
+
+    const userDetails = {
       name: user.name,
       role: user.role,
       subscription: user.subscription,
       subBuyTime: user.subBuyTime,
       subEndTime: user.subEndTime,
     };
+
+    // Кэшируем данные на 1 час
+    await this.redis.set(
+      `user:${token}`,
+      JSON.stringify(userDetails),
+      "EX",
+      3600
+    );
+
+    return userDetails;
   }
 }
