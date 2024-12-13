@@ -6,7 +6,7 @@ import { AppService } from "./app.service";
 import { SubscriptionCheckerModule } from "./subscription-checker/subscription-checker.module";
 import { SubscriptionModule } from "./subscription/subscription.module";
 import { UserModule } from "./user/user.module";
-import Redis from "ioredis";
+import { RedisModule } from "./redis/redis.module"; // Импортируем RedisModule
 
 @Module({
   imports: [
@@ -15,19 +15,9 @@ import Redis from "ioredis";
     UserModule,
     SubscriptionModule,
     SubscriptionCheckerModule,
+    RedisModule, // Добавляем RedisModule
   ],
   controllers: [AppController],
-  providers: [
-    AppService,
-    {
-      provide: "REDIS_CLIENT",
-      useFactory: () => {
-        return new Redis({
-          host: "localhost",
-          port: 6379,
-        });
-      },
-    },
-  ],
+  providers: [AppService],
 })
 export class AppModule {}
