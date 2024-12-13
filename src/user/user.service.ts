@@ -74,6 +74,17 @@ export class UserService {
     });
     return newUser;
   }
+  async updateUser(userId: number, data: Partial<User>): Promise<User> {
+    const updatedUser = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    // Очистка кэша для обновленного пользователя
+    await this.redis.del(`user:${updatedUser.token}`);
+
+    return updatedUser;
+  }
   async findUserByLogin(login: string): Promise<User | null> {
     return this.prisma.user.findUnique({ where: { name: login } });
   }

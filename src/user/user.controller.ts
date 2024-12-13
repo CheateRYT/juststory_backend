@@ -1,5 +1,6 @@
-import { Body, Controller, Get, Post, Request } from "@nestjs/common";
+import { Body, Controller, Get, Patch, Post, Request } from "@nestjs/common";
 import { UserService } from "./user.service";
+import { User } from "@prisma/client";
 
 @Controller("user")
 export class UserController {
@@ -42,5 +43,21 @@ export class UserController {
     }
     const userDetails = await this.usersService.getUser(token);
     return { userDetails };
+  }
+
+  @Patch("update")
+  async updateUser(@Request() req, @Body() updateData: Partial<User>) {
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      throw new Error("Токен не предоставлен");
+    }
+
+    const user = await this.usersService.validateToken(token);
+    if (!user) {
+      throw new Error("Пользователь не найден");
+    }
+
+    const updatedUser = await this.usersService.updateUser(user.id, updateData);
+    return { message: "Информация о пользователе обновлена", updatedUser };
   }
 }
