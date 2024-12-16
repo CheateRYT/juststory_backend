@@ -1,5 +1,5 @@
 import { Injectable, OnModuleInit, Inject } from "@nestjs/common";
-import { Subscription } from "@prisma/client";
+import { Subscription, User } from "@prisma/client";
 import Redis from "ioredis";
 import { PrismaService } from "src/prisma/prisma.service";
 import { UserService } from "src/user/user.service";
@@ -55,6 +55,10 @@ export class SubscriptionService implements OnModuleInit {
     return subscription;
   }
 
+  async getSubscriptions() {
+    return this.prisma.subscription.findMany();
+  }
+
   async updateSubscription(
     id: number,
     data: Partial<Subscription>,
@@ -70,12 +74,11 @@ export class SubscriptionService implements OnModuleInit {
     });
   }
 
-  async purchaseSubscription(token: string, subscriptionId: number) {
-    const user = await this.userService.validateToken(token);
-    if (!user) {
-      throw new Error("Пользователь не найден или токен недействителен");
-    }
-
+  async purchaseSubscription(
+    user: User,
+    subscriptionId: number,
+    token: string
+  ) {
     const subscription = await this.prisma.subscription.findUnique({
       where: { id: subscriptionId },
     });
@@ -86,7 +89,7 @@ export class SubscriptionService implements OnModuleInit {
     const now = new Date();
     const endTime = new Date(now);
     endTime.setDate(now.getDate() + subscription.daysPeriod);
-
+    await this.redis.del(`user:${token}`);
     return this.prisma.user.update({
       where: { id: user.id },
       data: {

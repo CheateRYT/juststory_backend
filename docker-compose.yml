@@ -1,38 +1,50 @@
-version: "3.8"
+# version: "3.8"
 
-services:
-  # Сервис для вашего приложения NestJS
-  app:
-    image: node:14
-    container_name: nest_app
-    working_dir: /src
-    volumes:
-      - .:/src
-    ports:
-      - "4201:4201" # Порт для вашего приложения
-    command: sh -c "npm install && npm run start:dev" # Установка зависимостей и запуск приложения в режиме разработки
-    depends_on:
-      - redis # Зависимость от Redis
+# services:
+#   # Сервис для вашего приложения NestJS
+#   app:
+#     image: node:14
+#     container_name: nest_app
+#     working_dir: /src
+#     volumes:
+#       - .:/src
+#     ports:
+#       - "4201:4201" # Порт для вашего приложения
+#     command: sh -c "npm install && npm run start:dev" # Установка зависимостей и запуск приложения в режиме разработки
+#     depends_on:
+#       - redis # Зависимость от Redis
 
-  # Сервис для Redis
-  redis:
-    image: redis:alpine
-    container_name: redis
-    ports:
-      - "6379:6379" # Порт для Redis
+#   # Сервис для Redis
+#   redis:
+#     image: redis:alpine
+#     container_name: redis
+#     ports:
+#       - "6379:6379" # Порт для Redis
 
-  # Сервис для Prisma Studio
-  prisma:
-    image: node:14
-    container_name: prisma_studio
-    working_dir: /src
-    volumes:
-      - .:/src
-    ports:
-      - "5555:5555" # Порт для Prisma Studio
-    command: sh -c "npm install && npx prisma studio" # Установка зависимостей и запуск Prisma Studio
-    depends_on:
-      - app # Зависимость от вашего приложения
-
-
-      #docker-compose up --build
+#   # Сервис для Prisma Studio
+#   prisma:
+#     image: node:14
+#     container_name: prisma_studio
+#     working_dir: /src
+#     volumes:
+#       - .:/src
+#     ports:
+#       - "5555:5555" # Порт для Prisma Studio
+#     command: sh -c "npm install && npx prisma studio" # Установка зависимостей и запуск Prisma Studio
+#     depends_on:
+#       - app # Зависимость от вашего приложения
+# version: "3.8"
+# services:
+#   grafana:
+#     image: grafana/grafana:latest
+#     container_name: grafana
+#     restart: unless-stopped
+#     environment:
+#       - TERM=linux
+#       - GF_INSTALL_PLUGINS=grafana-clock-panel,grafana-polystat-panel
+#     ports:
+#       - "3030:3030"
+#     volumes:
+#       - "grafana_storage:/var/lib/grafana"
+# volumes:
+#   grafana_storage: {}

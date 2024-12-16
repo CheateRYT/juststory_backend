@@ -7,7 +7,7 @@ import { SubscriptionCheckerModule } from "./subscription-checker/subscription-c
 import { SubscriptionModule } from "./subscription/subscription.module";
 import { UserModule } from "./user/user.module";
 import { RedisModule } from "./redis/redis.module"; // Импортируем RedisModule
-
+//import { PrometheusModule } from "@willsoto/nestjs-prometheus";
 @Module({
   imports: [
     AiModule,
@@ -15,7 +15,8 @@ import { RedisModule } from "./redis/redis.module"; // Импортируем Re
     UserModule,
     SubscriptionModule,
     SubscriptionCheckerModule,
-    RedisModule, // Добавляем RedisModule
+    RedisModule,
+    // PrometheusModule.forRoot(),
   ],
   controllers: [AppController],
   providers: [AppService],

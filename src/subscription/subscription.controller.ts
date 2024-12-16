@@ -14,6 +14,11 @@ export class SubscriptionController {
     return this.subscriptionService.getSubscriptionById(Number(id));
   }
 
+  @Get()
+  async getSubscriptions() {
+    return this.subscriptionService.getSubscriptions();
+  }
+
   @Post("update/:id")
   async updateSubscription(
     @Param("id") id: number,
@@ -29,10 +34,18 @@ export class SubscriptionController {
     @Param("id") subscriptionId: number,
     @Request() req
   ) {
-    const token = req.headers.authorization?.split(" ")[1]; // Извлекаем токен из заголовка
+    const token = req.headers.authorization?.split(" ")[1];
+    if (!token) {
+      throw new Error("Токен не предоставлен");
+    }
+    const user = await this.userService.validateToken(token);
+    if (!user) {
+      throw new Error("Пользователь не найден");
+    }
     return this.subscriptionService.purchaseSubscription(
-      token,
-      Number(subscriptionId)
-    ); // Передаем токен
+      user,
+      Number(subscriptionId),
+      token
+    );
   }
 }
