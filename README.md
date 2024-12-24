@@ -4,3 +4,4 @@
    -e "GF_SECURITY_ADMIN_PASSWORD=admin" \
    -v grafana-storage:/var/lib/grafana \
    grafana/grafana:latest
+3. Swagger UI http://localhost:4202/swagger
