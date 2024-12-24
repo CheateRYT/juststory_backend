@@ -8,8 +8,10 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle("Notes API")
-    .setDescription("The notes API description")
+    .setTitle("JustStory API")
+    .setDescription(
+      "JustStory API creator CheateRYT https://github.com/CheateRYT"
+    )
     .setVersion("1.0")
     .build();
 
